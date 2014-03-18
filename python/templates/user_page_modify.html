@@ -1,0 +1,24 @@
+{% extends "user_page.html" %}
+{% block user_page_content %}
+<form class="form-inline" role="form">
+	<div class="form-group">
+		<input type="text" class="form-control" id="insertEventName" placeholder="Enter name">
+	</div>
+	<div class="form-group">
+		<input type="time" class="form-control" id="insertEventTime" placeholder="Enter Time">
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control" id="insertEventLocation" placeholder="Enter Location">
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control" id="insertEventFood" placeholder="Enter Food">
+	</div>
+	<select class="form-control">
+		<option>insert</option>
+		<option>query</option>
+		<option>update</option>
+		<option>delete</option>
+	</select>
+	<button type="submit" class="btn btn-default">Submit</button>
+</form>
+{% endblock %}
