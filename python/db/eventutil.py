@@ -1,5 +1,5 @@
 from common import *
-from obj.event import Event
+from python.obj.event import Event
 import datetime
 
 class EventUtil:
@@ -11,18 +11,13 @@ class EventUtil:
 		connection = connect_to_db()
 		cursor = connection.cursor()
 		
-		result = cursor.execute("""
-			INSERT INTO Event (foodId, locationId, name, organizer, startTime)
+		cursor.execute("""
+			INSERT INTO Event (foodId, locationId, name, organizerId, startTime)
 			VALUES (NULL, NULL, "", NULL, NULL);
 			""")
 			
-		if(len(result) != None):
-			return Event(result[0])
-		else:
-			print("Error creating event")
-	
 		connection.commit()
-		connection.close()
+		return Event(connection.insert_id())
 		
 	@staticmethod
 	def update_event(event_obj):
@@ -32,7 +27,7 @@ class EventUtil:
 		if(not isinstance(event_obj, Event)):
 			print("Passed in wrong object when updating event")
 		
-		connection = connection_to_db()
+		connection = connect_to_db()
 		cursor = connection.cursor()
 		
 		#grab data from the objects
@@ -43,7 +38,7 @@ class EventUtil:
 			locationId = event_obj.location.locationId
 		
 		foodId = None
-		if(not eventId.food == None):
+		if(not event_obj.food == None):
 			foodId = event_obj.food.foodId
 		
 		organizerId = None
@@ -59,27 +54,33 @@ class EventUtil:
 			startTime = %s
 			WHERE
 			eventId = %s;
-			""", (str(foodId), str(locationId), eventId.name, str(organizerId), convert_datetime(eventId.time)))
-			
+			""", (str(foodId), str(locationId), event_obj.name, str(organizerId), convert_datetime_to_str(event_obj.time), eventId))
+		
 		connection.commit()
 		connection.close()
 	
 	@staticmethod
 	def get_event(eventId):
-		connection = connection_to_db()
+		connection = connect_to_db()
 		cursor = connection.cursor()
 		
-		result = cursor.execute("""
+		cursor.execute("""
 			SELECT * FROM Event WHERE
 			eventId = %s
-			""", (eventId))
+			""", (eventId,))
 		
-		return convert_array_to_obj(result)
+		result = cursor.fetchall()
+		
+		if(len(result) > 0):
+			return EventUtil.convert_array_to_obj(result[0])
+		else:
+			print("Event: " + str(eventId) + " does not exist")
+			return None
 	
 	@staticmethod
 	def get_events_by_food(food_obj):
 		foodId = food_obj.foodId
-		connection = connection_to_db()
+		connection = connect_to_db()
 		cursor = connection.cursor()
 		
 		cursor.execute("""
@@ -88,13 +89,13 @@ class EventUtil:
 			""", (foodId))
 			
 		result = cursor.fetchall()
-		for(row in result):
+		for row in result:
 			return convert_array_to_obj(row)
 			
 	@staticmethod
 	def get_events_by_location(location_obj):
 		locationId = location_obj.locationId
-		connection = connection_to_db()
+		connection = connect_to_db()
 		cursor = connection.cursor()
 		
 		cursor.execute("""
@@ -103,13 +104,13 @@ class EventUtil:
 			""", (locationId))
 				
 		result = cursor.fetchall()
-		for(row in result):
+		for row in result:
 			return convert_array_to_obj(row)
 			
 	@staticmethod
 	def get_events_by_organizer(organizer_obj):
 		organizerId = organizer_obj.organizerId
-		connection = connection_to_db()
+		connection = connect_to_db()
 		cursor = connection.cursor()
 		
 		cursor.execute("""
@@ -118,15 +119,15 @@ class EventUtil:
 			""", (organizerId))
 	
 		result = cursor.fetchall()
-		for(row in result):
+		for row in result:
 			return convert_array_to_obj(row)
 	
 	@staticmethod
 	def convert_array_to_obj(array):
 		eventId, foodId, locationId, name, organizerId, startTime = array
-		food_obj = FoodUtil.get_food(foodId)
-		location_obj = LocationUtil.get_location(locationId)
-		organizer_obj = UserUtil.get_user(organizerId)
-		date_obj = datetime.mktime(datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S'))
+		food_obj = None#FoodUtil.get_food(foodId)
+		location_obj = None#LocationUtil.get_location(locationId)
+		organizer_obj = None#UserUtil.get_user(organizerId)
+		date_obj = convert_str_to_datetime(startTime)
 		
 		return Event(eventId, name, date_obj, location_obj, food_obj, organizer_obj)

@@ -1,5 +1,5 @@
 import MySQLdb
-import datetime
+import datetime, time
 
 def connect_to_db():
 	"""
@@ -14,5 +14,12 @@ def connect_to_db():
 	
 	return connection
 	
-def convert_datetime(datetime_obj):
+def convert_datetime_to_str(datetime_obj):
+	if(datetime_obj == None):
+		return None
 	return datetime_obj.strftime('%Y-%m-%d %H:%M:%S')
+	
+def convert_str_to_datetime(date_str):
+	if(date_str == None):
+		return None
+	return datetime.datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
