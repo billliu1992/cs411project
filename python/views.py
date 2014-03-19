@@ -44,3 +44,11 @@ def index():
 @app.route('/user_page')
 def user_page():
 	return render_template("user_page_modify.html", user='sally')
+
+@app.route('/login')
+def sign_in():
+	return render_template("sign_in.html")
+
+@app.route('/join')
+def sign_up():
+	return render_template("sign_up.html")
