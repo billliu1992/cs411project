@@ -9,10 +9,10 @@ class FoodUtil:
 		Enters food in the database, and returns an object for the user to manipulate
 		"""
 		connection = connect_to_db()
-	        cursor = connection.cursor()
+		cursor = connection.cursor()
 		          
 		cursor.execute("""
-			INSERT INTO Food (type)
+			INSERT INTO Food (foodName)
 			VALUES (NULL);
 			""")
 		
@@ -24,7 +24,7 @@ class FoodUtil:
 		"""
 		Updates the food in the database only if the food exists
 		"""
-		if(not isinstance(food_obj, Food):
+		if(not isinstance(food_obj, Food)):
 			print("Passed in wrong object when updating location")
 		                    
 		connection = connect_to_db()
@@ -33,31 +33,33 @@ class FoodUtil:
 		            
 		result = cursor.execute("""
 			UPDATE Food SET
-			type = %s
-			""", (food_obj.type))
+			foodName = %s,
+			WHERE
+			foodId = %s;
+			""", (food_obj.name, food_obj.foodId))
 		                    
 		connection.commit()
 		connection.close()
 		            
 	@staticmethod
-	def get_food(type):
+	def get_food(foodId):
 		connection = connect_to_db()
 		cursor = connection.cursor()
 		            
 		cursor.execute("""
 			SELECT * FROM Food WHERE
-			type = %s
-			""", (type))
+			foodId = %s
+			""", (foodId,))
 		                      
 		result = cursor.fetchall()
 		            
-		if (len(result) > 0) :
+		if(len(result) > 0):
 			return FoodUtil.convert_array_to_obj(result[0])
-		else :
-			print("Food type: " + str(type) + " does not exist")
+		else:
+			print("Food type: " + str(foodId) + " does not exist")
 			return None
 		                      
 	@staticmethod
 	def convert_array_to_obj(array):
-		type = array
-		return Food(type)
+		foodId, foodName = array
+		return Food(foodId, foodName)
