@@ -5,12 +5,6 @@ users in the system.
 @author: Will
 '''
 class User():
-	global first_name
-	global last_name
-	global user_name
-	global email
-	global liked_food
-	global prefd_location
 
 	'''
 	Initializes the user with
@@ -22,13 +16,14 @@ class User():
 	@param liked_food an array of foods the user likes
 	@param prefd_location an array of places the user prefers
 	'''
-	def set_info(self,first_name,last_name,email,liked_food,prefd_location):
-		self.first_name = first_name
-		self.last_name = last_name
-		self.user_name = user_name
+	def __init__(self, userId = 0, firstName = "", lastName = "", userName = "", email = "", password = ""):
+		self.userId = userId
+		self.firstName = firstName
+		self.lastName = lastName
+		self.userName = userName
 		self.email = email
-		self.liked_food = liked_food
-		self.pred_location = prefd_location
+		self.password = password
 
 class EventOrganizer(User):
-	global events
+	def __init__(self):
+		pass

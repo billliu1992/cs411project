@@ -2,6 +2,10 @@ from common import *
 from python.obj.event import Event
 import datetime
 
+from locationutil import LocationUtil
+from foodutil import FoodUtil
+from userutil import UserUtil
+
 class EventUtil:
 	@staticmethod
 	def create_event():
@@ -124,10 +128,10 @@ class EventUtil:
 	
 	@staticmethod
 	def convert_array_to_obj(array):
-		eventId, foodId, locationId, name, organizerId, startTime = array
-		food_obj = None#FoodUtil.get_food(foodId)
-		location_obj = None#LocationUtil.get_location(locationId)
-		organizer_obj = None#UserUtil.get_user(organizerId)
-		date_obj = convert_str_to_datetime(startTime)
+		eventId, locationId, foodId, organizerId, name, startTime = array
+		location_obj = LocationUtil.get_location(locationId)
+		food_obj = FoodUtil.get_food(foodId)
+		organizer_obj = UserUtil.get_user(organizerId)
+		#date_obj = convert_str_to_datetime(startTime)
 		
-		return Event(eventId, name, date_obj, location_obj, food_obj, organizer_obj)
+		return Event(eventId, name, startTime, location_obj, food_obj, organizer_obj)

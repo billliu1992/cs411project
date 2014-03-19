@@ -5,4 +5,6 @@ being served at a given event.
 @author: Will
 '''
 class Food():
-	global type
+	def __init__(self, foodId = 0, foodName = ""):
+		self.foodId = foodId
+		self.foodName = foodName
