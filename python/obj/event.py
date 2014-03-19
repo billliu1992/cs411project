@@ -4,11 +4,6 @@ A class to store the free food event data.
 @author: Will
 '''
 class Event():
-	global name
-	global time
-	global location
-	global food
-	
 	'''
 	Initializes the event with
 	the given information 
@@ -19,15 +14,11 @@ class Event():
 	@param location an instance of a Location object
 	@param food an instance of a Food object
 	'''
-	def set_info(self,name,time,location,food):
+	def __init__(self,eventid = 0, name = "", time = None, location = None, food = None, organizer = None):
 		self.name = name
 		self.time = time 
 		self.location = location
 		self.food = food
-
-	def get_name(self):
-		return self.name
-	
-	def get_time(self):
-		return self.time
+		self.organizer = organizer
+		self.eventId = eventid
 	
