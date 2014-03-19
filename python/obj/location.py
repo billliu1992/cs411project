@@ -5,6 +5,8 @@ location of each event
 @author: Will
 '''
 class Location():
-	global gps_coords
-	global address
-	global name	
+	def __init__(self, locationId, name = "", address = "", gps_coord = ""):
+		self.locationId = locationId
+		self.name = name
+		self.address = address
+		self.gps_coord = gps_coord
