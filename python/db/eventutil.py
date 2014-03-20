@@ -7,7 +7,7 @@ from foodutil import FoodUtil
 from userutil import UserUtil
 
 class EventUtil:
-	events_obj = {:}
+	events_dict= {:}
 	
 	@staticmethod
 	def create_event():
@@ -24,7 +24,7 @@ class EventUtil:
 			
 		connection.commit()
 		event_created = Event(connection.insert_id())
-		events_obj[event_created.eventId] = event_created
+		events_dict[event_created.eventId] = event_created
 		return event_created
 		
 	@staticmethod
@@ -82,12 +82,13 @@ class EventUtil:
 			result = cursor.fetchall()
 			
 			if(len(result) > 0):
-				event_to_return = EventUtil.convert_array_to_obj(result[0])
-				events_obj[eventId] = event_to_return
-				return event_to_return
+				return EventUtil.convert_array_to_obj(result[0])
 			else:
 				print("Event: " + str(eventId) + " does not exist")
 				return None
+		else:
+			event_to_return = EventUtil.convert_array_to_obj(result[0])
+			events_dict[eventId] = event_to_return
 	
 	@staticmethod
 	def get_events_by_food(food_obj):
