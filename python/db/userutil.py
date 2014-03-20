@@ -86,7 +86,7 @@ class UserUtil:
 	
 		in_db = False
 	
-		for(result in results):
+		for result in results:
 			email, firstName, lastName, password, userId, userName = result
 			if(username == userName and password == passwd):
 				in_db = True

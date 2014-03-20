@@ -7,7 +7,7 @@ from foodutil import FoodUtil
 from userutil import UserUtil
 
 class EventUtil:
-	events_dict= {:}
+	events_dict= {}
 	
 	@staticmethod
 	def create_event():

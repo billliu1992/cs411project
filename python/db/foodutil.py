@@ -3,7 +3,7 @@ from python.obj.food import Food
 import datetime
 
 class FoodUtil:
-	food_dict = {:}
+	food_dict = {}
 	
 	@staticmethod
 	def create_food():
@@ -21,7 +21,7 @@ class FoodUtil:
 		connection.commit()
 		
 		food_created = Food(connection.insert_id())
-		food_dict[food_created.foodId] = food_created
+		FoodUtil.food_dict[food_created.foodId] = food_created
 		return food_created
 			        
 	@staticmethod
@@ -48,7 +48,7 @@ class FoodUtil:
 		            
 	@staticmethod
 	def get_food(foodId):
-		if foodId in food_dict:
+		if foodId in FoodUtil.food_dict:
 			connection = connect_to_db()
 			cursor = connection.cursor()
 			            
@@ -66,7 +66,7 @@ class FoodUtil:
 				return None
 		else:
 			food_created = FoodUtil.convert_array_to_obj(result[0])
-			food_dict[food_created.foodId] = food_created	
+			FoodUtil.food_dict[food_created.foodId] = food_created	
 		                      
 	@staticmethod
 	def convert_array_to_obj(array):
