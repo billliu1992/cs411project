@@ -69,7 +69,7 @@ class EventUtil:
 	
 	@staticmethod
 	def get_event(eventId):
-		if eventId in events_obj:
+		if not eventId in EventUtil.events_dict:
 			
 			connection = connect_to_db()
 			cursor = connection.cursor()
@@ -82,13 +82,13 @@ class EventUtil:
 			result = cursor.fetchall()
 			
 			if(len(result) > 0):
-				return EventUtil.convert_array_to_obj(result[0])
+				EventUtil.events_dict[eventId] = EventUtil.convert_array_to_obj(result[0])
+				return EventUtil.events_dict[eventId]
 			else:
 				print("Event: " + str(eventId) + " does not exist")
 				return None
 		else:
-			event_to_return = EventUtil.convert_array_to_obj(result[0])
-			events_dict[eventId] = event_to_return
+			return EventUtil.events_dict[eventId]
 	
 	@staticmethod
 	def get_events_by_food(food_obj):

@@ -48,7 +48,7 @@ class FoodUtil:
 		            
 	@staticmethod
 	def get_food(foodId):
-		if foodId in FoodUtil.food_dict:
+		if not foodId in FoodUtil.food_dict:
 			connection = connect_to_db()
 			cursor = connection.cursor()
 			            
@@ -60,13 +60,14 @@ class FoodUtil:
 			result = cursor.fetchall()
 			            
 			if(len(result) > 0):
-				return FoodUtil.convert_array_to_obj(result[0])
+				new_food = FoodUtil.convert_array_to_obj(result[0])
+				FoodUtil.food_dict[foodId] = new_food
+				return new_food
 			else:
 				print("Food type: " + str(foodId) + " does not exist")
 				return None
 		else:
-			food_created = FoodUtil.convert_array_to_obj(result[0])
-			FoodUtil.food_dict[food_created.foodId] = food_created	
+			return FoodUtil.food_dict[foodId]
 		                      
 	@staticmethod
 	def convert_array_to_obj(array):
