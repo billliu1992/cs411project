@@ -51,7 +51,7 @@ class EventUtil:
 		
 		organizerId = None
 		if(not event_obj.organizer == None):
-			organizerId = event_obj.organizer.organizerId
+			organizerId = event_obj.organizer.userId
 		
 		result = cursor.execute("""
 			UPDATE Event SET
@@ -63,6 +63,8 @@ class EventUtil:
 			WHERE
 			eventId = %s;
 			""", (str(foodId), str(locationId), event_obj.name, str(organizerId), convert_datetime_to_str(event_obj.time), eventId))
+		
+		print("UPDATING RESULT: " + str(result))
 		
 		connection.commit()
 		connection.close()
