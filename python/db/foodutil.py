@@ -3,6 +3,8 @@ from python.obj.food import Food
 import datetime
 
 class FoodUtil:
+	food_dict = {:}
+	
 	@staticmethod
 	def create_food():
 		"""
@@ -17,7 +19,10 @@ class FoodUtil:
 			""")
 		
 		connection.commit()
-		return Food(connection.insert_id())
+		
+		food_created = Food(connection.insert_id())
+		food_dict[food_created.foodId] = food_created
+		return food_created
 			        
 	@staticmethod
 	def update_food(food_obj):
@@ -43,21 +48,25 @@ class FoodUtil:
 		            
 	@staticmethod
 	def get_food(foodId):
-		connection = connect_to_db()
-		cursor = connection.cursor()
-		            
-		cursor.execute("""
-			SELECT * FROM Food WHERE
-			foodId = %s
-			""", (foodId,))
-		                      
-		result = cursor.fetchall()
-		            
-		if(len(result) > 0):
-			return FoodUtil.convert_array_to_obj(result[0])
+		if foodId in food_dict:
+			connection = connect_to_db()
+			cursor = connection.cursor()
+			            
+			cursor.execute("""
+				SELECT * FROM Food WHERE
+				foodId = %s
+				""", (foodId,))
+			                      
+			result = cursor.fetchall()
+			            
+			if(len(result) > 0):
+				return FoodUtil.convert_array_to_obj(result[0])
+			else:
+				print("Food type: " + str(foodId) + " does not exist")
+				return None
 		else:
-			print("Food type: " + str(foodId) + " does not exist")
-			return None
+			food_created = FoodUtil.convert_array_to_obj(result[0])
+			food_dict[food_created.foodId] = food_created	
 		                      
 	@staticmethod
 	def convert_array_to_obj(array):
