@@ -7,6 +7,8 @@ from foodutil import FoodUtil
 from userutil import UserUtil
 
 class EventUtil:
+	events_dict= {:}
+	
 	@staticmethod
 	def create_event():
 		"""
@@ -21,7 +23,9 @@ class EventUtil:
 			""")
 			
 		connection.commit()
-		return Event(connection.insert_id())
+		event_created = Event(connection.insert_id())
+		events_dict[event_created.eventId] = event_created
+		return event_created
 		
 	@staticmethod
 	def update_event(event_obj):
@@ -65,21 +69,26 @@ class EventUtil:
 	
 	@staticmethod
 	def get_event(eventId):
-		connection = connect_to_db()
-		cursor = connection.cursor()
-		
-		cursor.execute("""
-			SELECT * FROM Event WHERE
-			eventId = %s
-			""", (eventId,))
-		
-		result = cursor.fetchall()
-		
-		if(len(result) > 0):
-			return EventUtil.convert_array_to_obj(result[0])
+		if eventId in events_obj:
+			
+			connection = connect_to_db()
+			cursor = connection.cursor()
+			
+			cursor.execute("""
+				SELECT * FROM Event WHERE
+				eventId = %s
+				""", (eventId,))
+			
+			result = cursor.fetchall()
+			
+			if(len(result) > 0):
+				return EventUtil.convert_array_to_obj(result[0])
+			else:
+				print("Event: " + str(eventId) + " does not exist")
+				return None
 		else:
-			print("Event: " + str(eventId) + " does not exist")
-			return None
+			event_to_return = EventUtil.convert_array_to_obj(result[0])
+			events_dict[eventId] = event_to_return
 	
 	@staticmethod
 	def get_events_by_food(food_obj):
