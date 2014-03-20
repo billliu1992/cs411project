@@ -8,23 +8,26 @@
 
 	<div class="col-md-6">
 		<h2>Event <small>Location</small></h2>
-		<form class="form-horizontal" role="form">
+		<form class="form-horizontal" role="form" action="/edit_{{event.eventId}}" method=post>
 			<div class="form-group">
 				<label for="event_location_name" class="col-sm-2 control-label">Name</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_location_name" placeholder="Location Name">
+					<input type="text" class="form-control" name="event_location_name" 
+						   value="{{event.location.name}}" placeholder="Location Name">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="event_location_address" class="col-sm-2 control-label">Address</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_location_address" placeholder="Address">
+					<input type="text" class="form-control" name="event_location_address" 
+						   value="{{event.location.address}}" placeholder="Address">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="event_location_gpsAddress" class="col-sm-2 control-label">gpsAddress</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_location_gpsAddress" placeholder="gpsAddress">
+					<input type="text" class="form-control" name="event_location_gpsAddress" 
+						   value="{{event.location.gps_coord}}" placeholder="gpsAddress">
 				</div>
 			</div>
 
@@ -32,47 +35,17 @@
 			<div class="form-group">
 				<label for="event_food_name" class="col-sm-2 control-label">foodName</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_food_name" placeholder="foodName">
+					<input type="text" class="form-control" name="event_food_name" 
+						   value="{{event.food.foodName}}" placeholder="foodName">
 				</div>
 			</div>
-
-			<h2>Event <small>Organizer</small></h2>
-			<div class="form-group">
-				<label for="event_organizer_firstName" class="col-sm-2 control-label">firstName</label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_organizer_firstName" placeholder="firstName">
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="event_organizer_lastName" class="col-sm-2 control-label">lastName</label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_organizer_lastName" placeholder="lastName">
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="event_organizer_userName" class="col-sm-2 control-label">userName</label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_organizer_userName" placeholder="userName">
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="event_organizer_email" class="col-sm-2 control-label">email</label>
-				<div class="col-sm-10">
-					<input type="email" class="form-control" id="event_organizer_email" placeholder="email">
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="event_organizer_password" class="col-sm-2 control-label">password</label>
-				<div class="col-sm-10">
-					<input type="password" class="form-control" id="event_organizer_password" placeholder="password">
-				</div>
-			</div>
-
+			
 			<h2>Event <small>Name</small></h2>
 			<div class="form-group">
 				<label for="event_name" class="col-sm-2 control-label">name</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="event_name" placeholder="Event Name">
+					<input type="text" class="form-control" name="event_name" 
+						   value="{{event.name}}" placeholder="Event Name">
 				</div>
 			</div>
 			<div class="form-group">
@@ -82,6 +55,9 @@
 			</div>
 		</form>
 	</div>
+	<form class="form-horizontal" action="/delete_{{event.eventId}}">
+		<button type="submit" class="btn btn-danger">Delete</button>		
+	</form>
 
 <div class="col-md-3"></div>
 

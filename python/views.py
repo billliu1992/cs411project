@@ -27,6 +27,7 @@ def index():
 		event_body['time'] = event.time
 		event_body['location'] = event.location
 		event_body['food'] = event.food
+		event_body['eventId'] = event.eventId
 
 		events.append(event_body)
 		
@@ -65,6 +66,24 @@ def create_new_user():
 	return redirect("/")
 
 
-@app.route('/event_edit')
-def event_edit():
-	return render_template("event_edit.html")
+@app.route('/edit_<id>',methods=['GET','POST'])
+def event_edit(id=None):
+	if request.method == 'GET':
+		event = EventUtil.get_event(id)
+		return render_template("event_edit.html",event=event)
+	else:
+		event = EventUtil.get_event(id)
+		event.location.name = request.form['event_location_name']
+		event.location.address = request.form['event_location_address']
+		event.location.gps_coord = request.form['event_location_gpsAddress']
+		event.food.foodName = request.form['event_food_name']
+		event.name = request.form['event_name']
+		
+		EventUtil.update_event(event)
+
+		return redirect('/index')
+	
+@app.route('/delete_<id>')
+def event_delete(id=None):
+	event = EventUtil.delete_event(id)
+	return redirect('/index')

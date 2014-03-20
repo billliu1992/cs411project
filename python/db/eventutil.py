@@ -91,6 +91,20 @@ class EventUtil:
 			return EventUtil.events_dict[eventId]
 	
 	@staticmethod
+	def delete_event(eventId):
+		connection = connect_to_db()
+		cursor = connection.cursor()
+		
+		print cursor.execute("""
+			DELETE FROM Event WHERE eventId=%s
+			""",(eventId,))
+		
+		del(EventUtil.events_dict[eventId])
+		
+		connection.commit()
+		connection.close()
+		
+	@staticmethod
 	def get_events_by_food(food_obj):
 		foodId = food_obj.foodId
 		connection = connect_to_db()
