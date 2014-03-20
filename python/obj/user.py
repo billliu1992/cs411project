@@ -23,6 +23,7 @@ class User():
 		self.userName = userName
 		self.email = email
 		self.password = password
+		self.location_pref = []
 
 class EventOrganizer(User):
 	def __init__(self):

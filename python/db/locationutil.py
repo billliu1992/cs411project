@@ -3,6 +3,9 @@ from python.obj.location import Location
 import datetime
 
 class LocationUtil:
+
+	location_dict = {}
+
 	@staticmethod
 	def create_location():
 		"""
@@ -17,7 +20,8 @@ class LocationUtil:
 			""")
 			
 		connection.commit()
-		return Location(connection.insert_id())
+		LocationUtil.location_dict[connection.insert_id()] = Location(connection.insert_id())
+		return location_dict[connection.insert_id()]
 		
 	@staticmethod
 	def update_location(location_obj):
@@ -45,21 +49,28 @@ class LocationUtil:
 		
 	@staticmethod
 	def get_location(locationId):
-		connection = connect_to_db()
-		cursor = connection.cursor()
+	
+		if not locationId in LocationUtil.location_dict:
+			connection = connect_to_db()
+			cursor = connection.cursor()
 		
-		cursor.execute("""
-			SELECT * FROM Location WHERE
-			locationId = %s
-			""", (locationId,))
+			cursor.execute("""
+				SELECT * FROM Location WHERE
+				locationId = %s
+				""", (locationId,))
 		
-		result = cursor.fetchall()
+			result = cursor.fetchall()
 		
-		if(len(result) > 0):
-			return LocationUtil.convert_array_to_obj(result[0])
+			if(len(result) > 0):
+				new_location_obj = LocationUtil.convert_array_to_obj(result[0])
+				
+				LocationUtil.location_dict[locationId] = new_location_obj
+				return new_location_obj
+			else:
+				print("Location: " + str(locationId) + " does not exist")
+				return None
 		else:
-			print("Location: " + str(locationId) + " does not exist")
-			return None
+			return LocationUtil.location_dict[locationId]
 			
 	@staticmethod
 	def convert_array_to_obj(array):

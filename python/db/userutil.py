@@ -3,6 +3,9 @@ from python.obj.user import User
 import datetime
 
 class UserUtil:
+
+	user_dict = {}
+
 	@staticmethod
 	def create_user():
 		"""
@@ -17,7 +20,8 @@ class UserUtil:
 			""")
 			
 		connection.commit()
-		return User(connection.insert_id())
+		UserUtil.user_dict[connection.insert_id()] = User(connection.insert_id())
+		return UserUtil.user_dict[connection.insert_id()]
 		
 	@staticmethod
 	def update_user(user_obj):
@@ -47,22 +51,48 @@ class UserUtil:
 		
 	@staticmethod
 	def get_user(userId):
+		if(not userId in UserUtil.user_dict):
+			connection = connect_to_db()
+			cursor = connection.cursor()
+		
+			cursor.execute("""
+				SELECT * FROM User WHERE
+				userId = %s
+				""", (userId,))
+		
+			result = cursor.fetchall()
+		
+			if(len(result) > 0):
+				new_user_obj = UserUtil.convert_array_to_obj(result[0])
+				UserUtil.user_dict[userId] = new_user_obj
+				return new_user_obj
+			else:
+				print("User: " + str(userId) + " does not exist")
+				return None
+		else:
+			return UserUtil.user_dict[userId]
+		
+
+	@staticmethod
+	def authenticate(username, passwd):
 		connection = connect_to_db()
 		cursor = connection.cursor()
 		
 		cursor.execute("""
-			SELECT * FROM User WHERE
-			userId = %s
-			""", (userId,))
-		
-		result = cursor.fetchall()
-		
-		if(len(result) > 0):
-			return UserUtil.convert_array_to_obj(result[0])
-		else:
-			print("User: " + str(userId) + " does not exist")
-			return None
+			SELECT * FROM User
+			""")
 			
+		results = cursor.fetchall()		
+	
+		in_db = False
+	
+		for(result in results):
+			email, firstName, lastName, password, userId, userName = result
+			if(username == userName and password == passwd):
+				in_db = True
+				
+		return in_db
+	
 	@staticmethod
 	def convert_array_to_obj(array):
 		userId, firstName, lastName, userName, email, password = array
