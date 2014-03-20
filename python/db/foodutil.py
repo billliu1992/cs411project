@@ -38,10 +38,10 @@ class FoodUtil:
 		            
 		result = cursor.execute("""
 			UPDATE Food SET
-			foodName = %s,
+			foodName = %s
 			WHERE
 			foodId = %s;
-			""", (food_obj.name, food_obj.foodId))
+			""", (food_obj.foodName, food_obj.foodId))
 		                    
 		connection.commit()
 		connection.close()

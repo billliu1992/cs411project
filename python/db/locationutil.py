@@ -21,7 +21,7 @@ class LocationUtil:
 			
 		connection.commit()
 		LocationUtil.location_dict[connection.insert_id()] = Location(connection.insert_id())
-		return location_dict[connection.insert_id()]
+		return LocationUtil.location_dict[connection.insert_id()]
 		
 	@staticmethod
 	def update_location(location_obj):

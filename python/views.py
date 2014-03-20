@@ -4,6 +4,8 @@ from python import app
 from python.db.common import *
 from python.db.eventutil import EventUtil
 from python.db.userutil import UserUtil
+from python.db.locationutil import LocationUtil
+from python.db.foodutil import FoodUtil
 
 @app.route('/')
 @app.route('/index')
@@ -79,6 +81,26 @@ def event_edit(id=None):
 		event.food.foodName = request.form['event_food_name']
 		event.name = request.form['event_name']
 		
+		EventUtil.update_event(event)
+
+		return redirect('/index')
+
+@app.route('/edit_new',methods=['GET','POST'])
+def event_new():
+	if request.method == 'GET':
+		return render_template("event_new.html")
+	else:
+		event = EventUtil.create_event()
+		event.location = LocationUtil.create_location()
+		event.location.name = request.form['event_location_name']
+		event.location.address = request.form['event_location_address']
+		event.location.gps_coord = request.form['event_location_gpsAddress']
+		event.food = FoodUtil.create_food()
+		event.food.foodName = request.form['event_food_name']
+		event.name = request.form['event_name']
+		
+		LocationUtil.update_location(event.location)
+		FoodUtil.update_food(event.food)
 		EventUtil.update_event(event)
 
 		return redirect('/index')

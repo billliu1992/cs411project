@@ -24,7 +24,7 @@ class EventUtil:
 			
 		connection.commit()
 		event_created = Event(connection.insert_id())
-		events_dict[event_created.eventId] = event_created
+		EventUtil.events_dict[event_created.eventId] = event_created
 		return event_created
 		
 	@staticmethod
