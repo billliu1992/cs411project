@@ -5,3 +5,8 @@ body {
   padding-top: 70px;
   padding-bottom: 40px;
 }
+
+.logged-in-user {
+	color: #fff;
+	margin-top: 10px;
+}

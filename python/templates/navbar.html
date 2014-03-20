@@ -3,9 +3,15 @@
 		<div class="navbar-header">
 			<a class="navbar-brand" href="/index">Free Food</a>
 		</div>
-		<form class="navbar-form navbar-right" role="form">
-			<a href="/join" role="button" class="btn btn-success">Sign up</a>
-			<a href="/login" role="button" class="btn btn-default">Sign in</a>
-		</form>
+		{% if session.logged_in_user is defined %}
+			<div class='navbar-right logged-in-user'>
+				{{session.logged_in_user}}
+			</div>
+		{% else %}
+			<form class="navbar-form navbar-right" role="form">
+				<a href="/join" role="button" class="btn btn-success">Sign up</a>
+				<a href="/login" role="button" class="btn btn-default">Sign in</a>
+			</form>
+		{% endif %}
 	</div>
 </div>

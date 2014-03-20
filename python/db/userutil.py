@@ -37,13 +37,12 @@ class UserUtil:
 		
 		result = cursor.execute("""
 			UPDATE User SET
-			firstName = %s
-			lastName  = %s
-			userName  = %s
-			email  = %s
+			firstName = %s,
+			lastName  = %s,
+			userName  = %s,
+			email = %s,
 			password  = %s
-			WHERE
-			userId = %s;
+			WHERE userId = %s;
 			""", (user_obj.firstName, user_obj.lastName, user_obj.userName, user_obj.email, user_obj.password, user_obj.userId))
 		
 		connection.commit()
@@ -88,7 +87,7 @@ class UserUtil:
 	
 		for result in results:
 			email, firstName, lastName, password, userId, userName = result
-			if(username == userName and password == passwd):
+			if((username == userName or username == email) and password == passwd):
 				in_db = True
 				
 		return in_db
