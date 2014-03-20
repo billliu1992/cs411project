@@ -3,7 +3,7 @@ from python.obj.food import Food
 import datetime
 
 class FoodUtil:
-	food_dict = {:}
+	food_dict = {}
 	
 	@staticmethod
 	def create_food():
