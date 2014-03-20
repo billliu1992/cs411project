@@ -1,1 +1,91 @@
 {% extends "base.html" %}
+{% block title %}UIUC FreeFood - Event Edit{% endblock %}
+{% block content %}
+<div class="container">
+
+<div class="row">
+	<div class="col-md-3"></div>
+
+	<div class="col-md-6">
+		<h2>Event <small>Location</small></h2>
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="event_location_name" class="col-sm-2 control-label">Name</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_location_name" placeholder="Location Name">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="event_location_address" class="col-sm-2 control-label">Address</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_location_address" placeholder="Address">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="event_location_gpsAddress" class="col-sm-2 control-label">gpsAddress</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_location_gpsAddress" placeholder="gpsAddress">
+				</div>
+			</div>
+
+			<h2>Event <small>Food</small></h2>
+			<div class="form-group">
+				<label for="event_food_name" class="col-sm-2 control-label">foodName</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_food_name" placeholder="foodName">
+				</div>
+			</div>
+
+			<h2>Event <small>Organizer</small></h2>
+			<div class="form-group">
+				<label for="event_organizer_firstName" class="col-sm-2 control-label">firstName</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_organizer_firstName" placeholder="firstName">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="event_organizer_lastName" class="col-sm-2 control-label">lastName</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_organizer_lastName" placeholder="lastName">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="event_organizer_userName" class="col-sm-2 control-label">userName</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_organizer_userName" placeholder="userName">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="event_organizer_email" class="col-sm-2 control-label">email</label>
+				<div class="col-sm-10">
+					<input type="email" class="form-control" id="event_organizer_email" placeholder="email">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="event_organizer_password" class="col-sm-2 control-label">password</label>
+				<div class="col-sm-10">
+					<input type="password" class="form-control" id="event_organizer_password" placeholder="password">
+				</div>
+			</div>
+
+			<h2>Event <small>Name</small></h2>
+			<div class="form-group">
+				<label for="event_name" class="col-sm-2 control-label">name</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="event_name" placeholder="Event Name">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="submit" class="btn btn-default">Submit</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+<div class="col-md-3"></div>
+
+</div>
+
+</div>
+{% endblock %}
