@@ -22,9 +22,11 @@ class EventUtil:
 			VALUES (NULL, NULL, "", NULL, NULL);
 			""")
 			
+		insert_id = connection.insert_id()
+		
 		connection.commit()
-		event_created = Event(connection.insert_id())
-		EventUtil.events_dict[event_created.eventId] = event_created
+		event_created = Event(insert_id)
+		EventUtil.events_dict[insert_id] = event_created
 		return event_created
 		
 	@staticmethod
@@ -52,6 +54,8 @@ class EventUtil:
 		organizerId = None
 		if(not event_obj.organizer == None):
 			organizerId = event_obj.organizer.userId
+		
+		print("UPDATING: " + str(eventId))
 		
 		result = cursor.execute("""
 			UPDATE Event SET

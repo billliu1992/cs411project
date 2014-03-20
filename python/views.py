@@ -75,12 +75,21 @@ def event_edit(id=None):
 		return render_template("event_edit.html",event=event)
 	else:
 		event = EventUtil.get_event(id)
+		if(event.location == None):
+			event.location = LocationUtil.create_location()
+
 		event.location.name = request.form['event_location_name']
 		event.location.address = request.form['event_location_address']
 		event.location.gps_coord = request.form['event_location_gpsAddress']
+			
+		if(event.food == None):
+			event.food = FoodUtil.create_food()
+			
 		event.food.foodName = request.form['event_food_name']
 		event.name = request.form['event_name']
 		
+		FoodUtil.update_food(event.food)
+		LocationUtil.update_location(event.location)
 		EventUtil.update_event(event)
 
 		return redirect('/index')
@@ -98,6 +107,8 @@ def event_new():
 		event.food = FoodUtil.create_food()
 		event.food.foodName = request.form['event_food_name']
 		event.name = request.form['event_name']
+		
+		print(event.name)
 		
 		LocationUtil.update_location(event.location)
 		FoodUtil.update_food(event.food)
