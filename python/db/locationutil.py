@@ -18,10 +18,12 @@ class LocationUtil:
 			INSERT INTO Location (name, address, gpsAddr)
 			VALUES ("", NULL, NULL);
 			""")
-			
+		
+		insert_id = connection.insert_id()
+		
 		connection.commit()
-		LocationUtil.location_dict[connection.insert_id()] = Location(connection.insert_id())
-		return LocationUtil.location_dict[connection.insert_id()]
+		LocationUtil.location_dict[insert_id] = Location(insert_id)
+		return LocationUtil.location_dict[insert_id]
 		
 	@staticmethod
 	def update_location(location_obj):

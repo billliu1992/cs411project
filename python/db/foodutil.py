@@ -18,10 +18,12 @@ class FoodUtil:
 			VALUES (NULL);
 			""")
 		
-		connection.commit()
 		
 		food_created = Food(connection.insert_id())
 		FoodUtil.food_dict[food_created.foodId] = food_created
+		
+		connection.commit()
+		
 		return food_created
 			        
 	@staticmethod
