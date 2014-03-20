@@ -41,3 +41,7 @@ def sign_in():
 @app.route('/join')
 def sign_up():
 	return render_template("sign_up.html")
+
+@app.route('/event_edit')
+def event_edit():
+	return render_template("event_edit.html")
