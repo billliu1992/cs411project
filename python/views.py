@@ -1,11 +1,18 @@
-from flask import render_template, request, redirect, session
-from python import app
+from flask import render_template, request, redirect, session, flash, url_for
+from flask.ext.login import login_user, current_user, login_required, logout_user
+from python import app, lm
 
 from python.db.common import *
 from python.db.eventutil import EventUtil
 from python.db.userutil import UserUtil
 from python.db.locationutil import LocationUtil
 from python.db.foodutil import FoodUtil
+
+from python.obj.user import User
+
+@lm.user_loader
+def load_user(username):
+	return User.get(username)
 
 @app.route('/')
 @app.route('/index')
@@ -39,10 +46,42 @@ def index():
 def user_page():
 	return render_template("user_page_modify.html", user='sally')
 
+"""
 @app.route('/login')
 def sign_in():
 	return render_template("sign_in.html")
+"""
 
+@app.route('/login', methods=['GET', 'POST'])
+def sign_in():
+	if request.method == 'POST':
+		username=request.form['email']
+		password=request.form['passwd']
+
+		user=User.get(username)
+
+		if user and user.password == password:
+			user.authenticate()
+			login_user(user, remember=True)
+			flash("Logged in successfully.")
+			return redirect(url_for('index'))
+		else:
+			print "failed to login"
+			flash("Unable to login, please try again.")
+
+	return render_template("sign_in.html")
+
+@app.route('/logout')
+@login_required
+def logout():
+	user = current_user
+	user.authenticate(False)
+	logout_user()
+
+	flash("Logged out successfully.")
+	return redirect(url_for('index'))
+
+"""
 @app.route('/authenticate', methods=["POST"])
 def authenticate_user():
 	if(UserUtil.authenticate(request.form["email"], request.form["passwd"])):
@@ -50,6 +89,7 @@ def authenticate_user():
 		return redirect("/")
 	else:
 		return redirect("/login")
+"""
 
 @app.route('/join')
 def sign_up():

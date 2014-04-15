@@ -94,5 +94,5 @@ class UserUtil:
 	
 	@staticmethod
 	def convert_array_to_obj(array):
-		userId, firstName, lastName, userName, email, password = array
+		userId, firstName, lastName, userName, email, password, authenticated = array
 		return User(userId, firstName, lastName, userName, email, password)
