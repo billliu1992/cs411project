@@ -7,21 +7,27 @@ class UserUtil:
 	user_dict = {}
 
 	@staticmethod
-	def create_user():
+	def create_user(userName, email, password):
 		"""
-		Creates an user in the database, and returns an object for the user to manipulate
+		Creates an user in the database, and returns an object for 
+		the user to manipulate
 		"""
 		connection = connect_to_db()
 		cursor = connection.cursor()
 		
 		cursor.execute("""
 			INSERT INTO User (firstName, lastName, userName, email, password)
-			VALUES ("", "", "", "", "");
-			""")
+			VALUES ("", "", %s, %s, %s);
+			""", (userName, email, password))
 			
 		connection.commit()
-		UserUtil.user_dict[connection.insert_id()] = User(connection.insert_id())
-		return UserUtil.user_dict[connection.insert_id()]
+		userId = connection.insert_id()
+		connection.close()
+
+		user = User(userId, "", "", userName, email, password, False)
+		UserUtil.user_dict[userid] = user
+
+		return user
 		
 	@staticmethod
 	def update_user(user_obj):
@@ -34,7 +40,6 @@ class UserUtil:
 		connection = connect_to_db()
 		cursor = connection.cursor()
 		
-		
 		result = cursor.execute("""
 			UPDATE User SET
 			firstName = %s,
@@ -43,7 +48,8 @@ class UserUtil:
 			email = %s,
 			password  = %s
 			WHERE userId = %s;
-			""", (user_obj.firstName, user_obj.lastName, user_obj.userName, user_obj.email, user_obj.password, user_obj.userId))
+			""", (user_obj.firstName, user_obj.lastName, user_obj.userName,
+				user_obj.email, user_obj.password, user_obj.userId))
 		
 		connection.commit()
 		connection.close()
@@ -59,10 +65,10 @@ class UserUtil:
 				userId = %s
 				""", (userId,))
 		
-			result = cursor.fetchall()
+			result = cursor.fetchone()
 		
-			if(len(result) > 0):
-				new_user_obj = UserUtil.convert_array_to_obj(result[0])
+			if result:
+				new_user_obj = UserUtil.convert_array_to_obj(result)
 				UserUtil.user_dict[userId] = new_user_obj
 				return new_user_obj
 			else:

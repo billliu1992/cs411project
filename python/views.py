@@ -9,6 +9,7 @@ from python.db.locationutil import LocationUtil
 from python.db.foodutil import FoodUtil
 
 from python.obj.user import User
+from python.obj.form import RegistrationForm
 
 @lm.user_loader
 def load_user(username):
@@ -17,8 +18,6 @@ def load_user(username):
 @app.route('/')
 @app.route('/index')
 def index():
-
-	#Database stuff
 	connection = connect_to_db()
 	cursor = connection.cursor()
 
@@ -46,12 +45,6 @@ def index():
 def user_page():
 	return render_template("user_page_modify.html", user='sally')
 
-"""
-@app.route('/login')
-def sign_in():
-	return render_template("sign_in.html")
-"""
-
 @app.route('/login', methods=['GET', 'POST'])
 def sign_in():
 	if request.method == 'POST':
@@ -66,7 +59,6 @@ def sign_in():
 			flash("Logged in successfully.")
 			return redirect(url_for('index'))
 		else:
-			print "failed to login"
 			flash("Unable to login, please try again.")
 
 	return render_template("sign_in.html")
@@ -81,33 +73,18 @@ def logout():
 	flash("Logged out successfully.")
 	return redirect(url_for('index'))
 
-"""
-@app.route('/authenticate', methods=["POST"])
-def authenticate_user():
-	if(UserUtil.authenticate(request.form["email"], request.form["passwd"])):
-		session["logged_in_user"] = request.form["email"]
-		return redirect("/")
-	else:
-		return redirect("/login")
-"""
-
-@app.route('/join')
+@app.route('/join', methods=['GET', 'POST'])
 def sign_up():
-	return render_template("sign_up.html")
-	
-@app.route('/create_new', methods=["POST"])
-def create_new_user():
-	new_user = UserUtil.create_user()
-	new_user.userName = request.form["username"]
-	new_user.email = request.form["email-addr"]
-	new_user.password = request.form["password"]
-	UserUtil.update_user(new_user)
-	
-	session["logged_in_user"] = request.form["username"]
-	
-	return redirect("/")
+	form = RegistrationForm(request.form)
 
+	if request.method == 'POST' and form.validate():
+		new_user = UserUtil.create_user(form.username.data, form.email.data,
+				form.password.data)
+		flash("Thanks " + new_user.userName + " for registering")
+		return redirect(url_for('sign_in'))
 
+	return render_template("sign_up.html", form=form)
+	
 @app.route('/edit_<id>',methods=['GET','POST'])
 def event_edit(id=None):
 	if request.method == 'GET':

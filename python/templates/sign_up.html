@@ -9,25 +9,25 @@
 
 <div class="row">
 	<h1>Join UIUC FreeFood</h1>
+
+	{% if form.errors %}
+	<ul class="errors">
+	{% for field_name, field_errors in form.errors|dictsort if field_errors %}
+		{% for error in field_errors %}
+		<li>{{ form[field_name].label }}: {{ error }}</li>
+		{% endfor %}
+	{% endfor %}
+	</ul>
+	{% endif %}
 </div>
 
 <div class="row">
-	<form role="form" action="/create_new" method="POST">
+	<form role="form" action="/join" method="POST">
 		<div class="form-group">
-			<label for="signup_username">Username</label>
-			<input type="text" name="username" class="form-control" id="signup_username">
-		</div>
-		<div class="form-group">
-			<label for="signup_emailAddress">Email Address</label>
-			<input type="email" name="email-addr" class="form-control" id="signup_emailAddress">
-		</div>
-		<div class="form-group">
-			<label for="signup_password">Password</label>
-			<input type="password" name="password" class="form-control" id="signup_password">
-		</div>
-		<div class="form-group">
-			<label for="signup_confirmPassword">Confirm your password</label>
-			<input type="password" class="form-control" id="signup_confirmPassword">
+		{{ form.username.label }}: {{ form.username(class="form-control") }}
+		{{ form.email.label }}: {{ form.email(class="form-control") }}
+		{{ form.password.label }}: {{ form.password(class="form-control") }}
+		{{ form.confirm.label }}: {{ form.confirm(class="form-control") }}
 		</div>
 		<button type="submit" class="btn btn-default">Create an account</button>
 	</form>

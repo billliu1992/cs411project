@@ -1,21 +1,15 @@
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header">
 			<a class="navbar-brand" href="/index">Free Food</a>
 		</div>
-		{% if session.logged_in_user is defined %}
-			<div class='navbar-right logged-in-user'>
-				{{session.logged_in_user}}
-			</div>
-		{% else %}
-			<form class="navbar-form navbar-right" role="form">
-				{% if current_user.is_authenticated() %}
-					<a href="/logout" role="button" class="btn btn-success">Sign out</a>
-					{% else %}
-					<a href="/join" role="button" class="btn btn-success">Sign up</a>
-					<a href="/login" role="button" class="btn btn-default">Sign in</a>
-				{% endif %}
-			</form>
+		<div class="navbar-right">
+		{% if current_user.is_authenticated() %}
+			<a href="/logout" role="button" class="btn btn-success">Sign out</a>
+			{% else %}
+			<a href="/join" role="button" class="btn btn-success">Sign up</a>
+			<a href="/login" role="button" class="btn btn-default">Sign in</a>
 		{% endif %}
+		</div>
 	</div>
 </div>
