@@ -88,16 +88,16 @@ def sign_up():
 @app.route('/edit_<id>',methods=['GET','POST'])
 def event_edit(id=None):
 	if request.method == 'GET':
+	
+		print(LocationUtil.get_all_locations_json())
+		
 		event = EventUtil.get_event(id)
-		return render_template("event_edit.html",event=event)
+		all_locations = LocationUtil.get_all_locations_json()
+		return render_template("event_new.html", all_locations=all_locations)
 	else:
 		event = EventUtil.get_event(id)
 		if(event.location == None):
 			event.location = LocationUtil.create_location()
-
-		event.location.name = request.form['event_location_name']
-		event.location.address = request.form['event_location_address']
-		event.location.gps_coord = request.form['event_location_gpsAddress']
 			
 		if(event.food == None):
 			event.food = FoodUtil.create_food()
@@ -111,10 +111,22 @@ def event_edit(id=None):
 
 		return redirect('/index')
 
+@app.route('/new_location')
+def new_location():
+	if(request.method == 'GET'):
+		return render_template("location_new.html")
+	else:
+		event.location.name = request.form['event_location_name']
+		event.location.address = request.form['event_location_address']
+		event.location.gps_coord = request.form['event_location_gpsAddress']
+	
+		return redirect("/index")
+
 @app.route('/edit_new',methods=['GET','POST'])
 def event_new():
 	if request.method == 'GET':
-		return render_template("event_new.html")
+		all_locations = LocationUtil.get_all_locations_json()
+		return render_template("event_new.html", all_locations = all_locations)
 	else:
 		event = EventUtil.create_event()
 		event.location = LocationUtil.create_location()

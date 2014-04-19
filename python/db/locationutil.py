@@ -1,5 +1,7 @@
 from common import *
 from python.obj.location import Location
+
+import json
 import datetime
 
 class LocationUtil:
@@ -71,8 +73,20 @@ class LocationUtil:
 			else:
 				print("Location: " + str(locationId) + " does not exist")
 				return None
+				
+			connection.close()
 		else:
 			return LocationUtil.location_dict[locationId]
+			
+	@staticmethod
+	def get_all_locations_json():
+		connection = connect_to_db()
+		cursor = connection.cursor()
+		cursor.execute("SELECT * FROM Location")
+		results = cursor.fetchall()
+		
+		return json.dumps(results)
+		
 			
 	@staticmethod
 	def convert_array_to_obj(array):

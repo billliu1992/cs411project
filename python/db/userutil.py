@@ -25,7 +25,7 @@ class UserUtil:
 		connection.close()
 
 		user = User(userId, "", "", userName, email, password, False)
-		UserUtil.user_dict[userid] = user
+		UserUtil.user_dict[userId] = user
 
 		return user
 		
