@@ -85,13 +85,8 @@ def sign_up():
 
 	return render_template("sign_up.html", form=form)
 	
-<<<<<<< HEAD
 @app.route('/edit_<id>',methods=['GET','POST'])
 def event_edit(id=None):
-=======
-@app.route('/edit/<id>/', methods=['GET', 'POST'])
-def event_edit(id, locationid = None, foodid = None):
->>>>>>> locationrefactor
 	if request.method == 'GET':
 		event = EventUtil.get_event(id)
 		all_foods = FoodUtil.get_all_foods_array()
@@ -100,13 +95,6 @@ def event_edit(id, locationid = None, foodid = None):
 		return render_template("event_new.html", event=event, all_locations=all_locations, all_foods=all_foods)
 	else:
 		event = EventUtil.get_event(id)
-<<<<<<< HEAD
-		if(event.location == None):
-			event.location = LocationUtil.create_location()
-			
-		if(event.food == None):
-			event.food = FoodUtil.create_food()
-=======
 		
 		locationid = request.form["locationId"]
 		foodid = request.form["foodId"]
@@ -118,7 +106,6 @@ def event_edit(id, locationid = None, foodid = None):
 		if(foodid.isdigit()):
 			print(foodid)
 			event.food = FoodUtil.get_food(int(foodid))
->>>>>>> locationrefactor
 			
 		event.food.foodName = request.form['event_food_name']
 		
