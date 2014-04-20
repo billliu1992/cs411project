@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block title %}UIUC FreeFood - Event Edit{% endblock %}
 {% block content %}
+<script>
+	/* For toggling the new location/food boxes */
+	$(function() {
+		$("#new-loc-btn").click(function() { $(".new-location-box").toggle(); });
+	
+		$("#new-food-btn").click(function() { $(".new-food-box").toggle(); });
+		
+		
+	});
+</script>
+
 <div class="container">
 
 <div class="row">
@@ -10,17 +21,55 @@
 
 	<div class="col-md-6">
 		<h2>Event <small>Location</small></h2>
-		<form class="form-horizontal" role="form" action="/edit_new" method=post>
+		
+		<div class="form-group">
+			<label for="event_location_name" class="col-sm-2 control-label">Name</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" name="event_location_name" 
+					   placeholder="Start typing to filter">
+			</div>
+			<div class="auto_locname"></div>
+			
+		</div>
+		
+		<br /><br />
+		<div class="add-box new-location-box" style="display:none">
+			<span class="box-label">Create a new location</span>
 			<div class="form-group">
 				<label for="event_location_name" class="col-sm-2 control-label">Name</label>
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="event_location_name" 
 						   placeholder="Location Name">
 				</div>
-				<div class="auto_locname"></div>
 			</div>
+			<div class="form-group">
+				<label for="event_location_address" class="col-sm-2 control-label">Address</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="event_location_address" 
+						   placeholder="Address">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button class="btn btn-default submit-location">Submit</button>
+				</div>
+			</div>
+		</div>
+		<br /><br />
+		<div class="add-btn">
+			<button class="btn" id="new-loc-btn">Add new location?</button>
+		</div>
 
-			<h2>Event <small>Food</small></h2>
+		<h2>Event <small>Food</small></h2>
+		<div class="form-group">
+			<label for="event_food_name" class="col-sm-2 control-label">foodName</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" name="event_food_name" 
+					   placeholder="foodName">
+			</div>
+		</div>
+		<div class="add-box new-food-box" style="display:none">
+			<span class="box-label">Create a new food type</span>
 			<div class="form-group">
 				<label for="event_food_name" class="col-sm-2 control-label">foodName</label>
 				<div class="col-sm-10">
@@ -29,6 +78,22 @@
 				</div>
 			</div>
 			
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="submit" class="btn btn-default">Submit</button>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button class="btn btn-default submit-food">Submit</button>
+				</div>
+			</div>
+		</div>
+		<div class="add-btn">
+			<button class="btn" id="new-food-btn">Add food category?</button>
+		</div>
+		<form class="form-horizontal" role="form" action="/edit_new" method=post>
 			<h2>Event <small>Name</small></h2>
 			<div class="form-group">
 				<label for="event_name" class="col-sm-2 control-label">name</label>

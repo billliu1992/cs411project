@@ -85,8 +85,10 @@ def sign_up():
 
 	return render_template("sign_up.html", form=form)
 	
-@app.route('/edit_<id>',methods=['GET','POST'])
-def event_edit(id=None):
+@app.route('/edit/<id>/')
+@app.route('/edit/<id>/<locationid>')
+@app.route('/edit/<id>/<locationid>/<foodid>',methods=['GET','POST'])
+def event_edit(id, locationid = None, foodid = None):
 	if request.method == 'GET':
 	
 		print(LocationUtil.get_all_locations_json())
@@ -96,13 +98,12 @@ def event_edit(id=None):
 		return render_template("event_new.html", all_locations=all_locations)
 	else:
 		event = EventUtil.get_event(id)
-		if(event.location == None):
-			event.location = LocationUtil.create_location()
+		if(locationid != None):
+			event.location = LocationUtil.get_location(locationid)
 			
-		if(event.food == None):
-			event.food = FoodUtil.create_food()
+		if(foodid != None):
+			event.food = FoodUtil.get_food(foodid)
 			
-		event.food.foodName = request.form['event_food_name']
 		event.name = request.form['event_name']
 		
 		FoodUtil.update_food(event.food)
@@ -120,6 +121,15 @@ def new_location():
 		event.location.address = request.form['event_location_address']
 		event.location.gps_coord = request.form['event_location_gpsAddress']
 	
+		return redirect("/index")
+
+@app.route("/new_food")
+def new_food():
+	if(request.method == 'GET'):
+		return render_template("food_new.html")
+	else:
+		event.food.foodName = request.form['event_food_name']
+		
 		return redirect("/index")
 
 @app.route('/edit_new',methods=['GET','POST'])

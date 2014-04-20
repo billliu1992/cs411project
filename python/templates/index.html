@@ -18,7 +18,7 @@
         </thead>
         <tbody>
 			{% for event in events %}
-            <tr onclick="document.location = '/edit_{{event.eventId}}';">
+            <tr onclick="document.location = '/edit/{{event.eventId}}';">
                 <td>{{event.name}}</td>
                 <td>{{event.time}}</td>
                 <td>{{event.location.name}}</td>

@@ -10,3 +10,19 @@ body {
 	color: #fff;
 	margin-top: 10px;
 }
+
+/* box stuff */
+.box-label {
+	font-size: 20px;
+	padding-left: 15px;
+}
+
+.add-box {
+	display: block;
+	margin: 10px 0;
+}
+
+.add-btn {
+	display: block;
+	margin: 10px 0;
+}
