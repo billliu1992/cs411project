@@ -148,16 +148,22 @@ def event_new():
 		return render_template("event_new.html", event=event, all_locations=all_locations, all_foods=all_foods)
 	else:
 		event = EventUtil.create_event()
-		if(locationid != None):
-			event.location = LocationUtil.get_location(locationid)
+		
+		locationid = request.form["locationId"]
+		foodid = request.form["foodId"]
+		
+		if(locationid.isdigit()):
+			print(locationid)
+			event.location = LocationUtil.get_location(int(locationid))
 			
-		if(foodid != None):
-			event.food = FoodUtil.get_food(foodid)
+		if(foodid.isdigit()):
+			print(foodid)
+			event.food = FoodUtil.get_food(int(foodid))
 			
+		event.food.foodName = request.form['event_food_name']
+		
 		event.name = request.form['event_name']
 		
-		FoodUtil.update_food(event.food)
-		LocationUtil.update_location(event.location)
 		EventUtil.update_event(event)
 
 		return redirect('/index')
