@@ -100,11 +100,9 @@ def event_edit(id=None):
 		foodid = request.form["foodId"]
 		
 		if(locationid.isdigit()):
-			print(locationid)
 			event.location = LocationUtil.get_location(int(locationid))
 			
 		if(foodid.isdigit()):
-			print(foodid)
 			event.food = FoodUtil.get_food(int(foodid))
 			
 		event.food.foodName = request.form['event_food_name']
@@ -153,11 +151,9 @@ def event_new():
 		foodid = request.form["foodId"]
 		
 		if(locationid.isdigit()):
-			print(locationid)
 			event.location = LocationUtil.get_location(int(locationid))
 			
 		if(foodid.isdigit()):
-			print(foodid)
 			event.food = FoodUtil.get_food(int(foodid))
 			
 		event.food.foodName = request.form['event_food_name']
@@ -180,15 +176,35 @@ def preferences():
 		all_locations = LocationUtil.get_all_locations_array()
 		foods = FoodUtil.get_all_foods_array()
 		user = UserUtil.get_user(current_user.userId)
-		print user.food_pref
-		return render_template("preferences.html",all_locations=all_locations,foods=foods,)
+		
+		selected_locations = []
+		
+		for selected_loc_obj in user.location_pref:
+			selected_locations.append(selected_loc_obj.locationId)
+			
+		selected_foods = []
+		for selected_food_obj in user.food_pref:
+			selected_foods.append(selected_food_obj.foodId)
+		
+		return render_template("preferences.html",all_locations=all_locations,foods=foods,selected_locations=selected_locations,selected_foods=selected_foods)
 	else:
-		all_locations = LocationUtil.get_all_locations_array()
-		# 
-		# ADD SOMETHING HERE TO insert the new location preferences 
-		# into the database.
-		#
-		for location in all_locations:
-			request.form['pref-'+str(location[0])]
-		return redirect('/index');
+		current_user_obj = UserUtil.get_user(current_user.userId)
+		
+		new_locations = []
+		for location in request.form.getlist('location-prefs'):
+			new_locations.append(LocationUtil.get_location(location))
+			
+		
+		current_user_obj.location_pref = new_locations
+		
+		new_foods = []
+		for food in request.form.getlist('food-prefs'):
+			new_foods.append(FoodUtil.get_food(food))
+				
+		current_user_obj.food_pref = new_foods
+		
+		UserUtil.update_user_food_prefs(current_user_obj)
+		UserUtil.update_user_loc_prefs(current_user_obj)
+				
+		return redirect('/');
 

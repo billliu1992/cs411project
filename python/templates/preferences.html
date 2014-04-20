@@ -21,10 +21,13 @@
 	        <tbody>
 				{% for loc in all_locations %}
 	            <tr>
-	            	{% if loc[1]|length > 0 %}
-	            	<td><input type="checkbox" name="pref-{{loc[0]}}"></td>
+	       			{% if loc[0] in selected_locations %}
+	            		<td><input type="checkbox" name="location-prefs" value="{{loc[0]}}" checked></td>
+	            	{% else %}
+	            		<td><input type="checkbox" name="location-prefs" value="{{loc[0]}}"></td>
+	            	{% endif %}
 	                <td>{{loc[1]}}</td>
-	                {% endif %}
+	                
 	            </tr>
 				{% endfor %}
 	        </tbody>
@@ -40,10 +43,12 @@
 	        <tbody>
 				{% for food in foods %}
 	            <tr>
-	           		{% if food[1]|length > 0 %}
-	            	<td><input type="checkbox" name="pref-{{food[0]}}"></td>
-	                <td>{{food[1]}}</td>
+	           		{% if food[0] in selected_foods %}
+			        	<td><input type="checkbox" name="food-prefs" value="{{food[0]}}" checked></td>
+			        {% else %}
+			        	<td><input type="checkbox" name="food-prefs" value="{{food[0]}}"></td>
 	                {% endif %}
+		            <td>{{food[1]}}</td>
 	            </tr>
 				{% endfor %}
 	        </tbody>
