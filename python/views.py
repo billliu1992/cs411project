@@ -174,10 +174,21 @@ def event_delete(id=None):
 	return redirect('/index')
 
 @app.route('/preferences',methods=['GET','POST'])
+@login_required
 def preferences():
 	if request.method == 'GET':
-		all_locations = LocationUtil.get_all_locations_json()
-		return render_template("preferences.html",all_locations=all_locations)
+		all_locations = LocationUtil.get_all_locations_array()
+		foods = FoodUtil.get_all_foods_array()
+		user = UserUtil.get_user(current_user.userId)
+		print user.food_pref
+		return render_template("preferences.html",all_locations=all_locations,foods=foods,)
 	else:
+		all_locations = LocationUtil.get_all_locations_array()
+		# 
+		# ADD SOMETHING HERE TO insert the new location preferences 
+		# into the database.
+		#
+		for location in all_locations:
+			request.form['pref-'+str(location[0])]
 		return redirect('/index');
 

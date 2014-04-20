@@ -27,6 +27,7 @@ class User():
 		self.password = password
 		self.authenticated = authenticated
 		self.location_pref = []
+		self.food_pref = []
 
 	def get_id(self):
 		return self.userName
