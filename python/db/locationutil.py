@@ -86,6 +86,15 @@ class LocationUtil:
 		results = cursor.fetchall()
 		
 		return json.dumps(results)
+	
+	@staticmethod
+	def get_all_locations_array():
+		connection = connect_to_db()
+		cursor = connection.cursor()
+		cursor.execute("SELECT * FROM Location")
+		results = cursor.fetchall()
+		
+		return results
 		
 			
 	@staticmethod
