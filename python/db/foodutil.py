@@ -72,6 +72,16 @@ class FoodUtil:
 			return FoodUtil.food_dict[foodId]
 		                      
 	@staticmethod
+	def get_all_foods_array():
+		connection = connect_to_db()
+		cursor = connection.cursor()
+		            
+		cursor.execute("SELECT * FROM Food")
+		                      
+		result = cursor.fetchall()
+		return result
+		
+	@staticmethod
 	def convert_array_to_obj(array):
 		foodId, foodName = array
 		return Food(foodId, foodName)
