@@ -11,6 +11,9 @@ from python.db.foodutil import FoodUtil
 from python.obj.user import User
 from python.obj.form import RegistrationForm
 
+from python.crawl.fbutil import FacebookUtil
+from python.crawl.crawlutil import CrawlUtil
+
 @lm.user_loader
 def load_user(username):
 	return User.get(username)
@@ -71,10 +74,10 @@ def sign_in():
 		if user and user.password == password:
 			user.authenticate()
 			login_user(user, remember=True)
-			flash("Logged in successfully.")
+			flash("Logged in successfully.", "success")
 			return redirect(url_for('index'))
 		else:
-			flash("Unable to login, please try again.")
+			flash("Unable to login, please try again.", "danger")
 
 	return render_template("sign_in.html")
 
@@ -85,7 +88,7 @@ def logout():
 	user.authenticate(False)
 	logout_user()
 
-	flash("Logged out successfully.")
+	flash("Logged out successfully.", "success")
 	return redirect(url_for('index'))
 
 @app.route('/join', methods=['GET', 'POST'])
@@ -95,12 +98,12 @@ def sign_up():
 	if request.method == 'POST' and form.validate():
 		new_user = UserUtil.create_user(form.username.data, form.email.data,
 				form.password.data)
-		flash("Thanks " + new_user.userName + " for registering")
+		flash("Thanks " + new_user.userName + " for registering", "success")
 		return redirect(url_for('sign_in'))
 
 	return render_template("sign_up.html", form=form)
 	
-@app.route('/edit_<id>',methods=['GET','POST'])
+@app.route('/edit/<id>',methods=['GET','POST'])
 def event_edit(id=None):
 	if request.method == 'GET':
 		event = EventUtil.get_event(id)
@@ -222,5 +225,41 @@ def preferences():
 		UserUtil.update_user_food_prefs(current_user_obj)
 		UserUtil.update_user_loc_prefs(current_user_obj)
 				
-		return redirect('/');
-
+		return redirect('/')
+		
+@app.route('/import/', methods=["GET", "POST"])
+def import_facebook():
+	if(request.method == "GET"):
+		if current_user.is_authenticated():
+			return render_template("import_facebook.html")
+		else:
+			flash("You must be logged in to use this feature", "danger")
+			return redirect("/login")
+	else:
+		facebook_url = request.form["event-url"]
+		
+		eventId = FacebookUtil.url_get_event_id(facebook_url)
+		
+		if(eventId == None):
+			flash("You must enter a valid Facebook event URL of the format https://www.facebook.com/events/...")
+			return redirect("/import/")
+			
+		try:
+			event_dict = get_event_dict(eventId)
+		except FacebookError as e:
+			flash("e.strerror")
+			return redirect("/import/")
+		
+		
+		
+		is_free = CrawlUtil.is_free_food(event_dict["description"])
+		start_time = event_dict["start_time"]
+		is_date_only = event_dict["is_date_only"]
+		location = event_dict["location"]
+		venue = event_dict["venue"]
+		
+		if(not is_free):
+			flash("The description did not mention free food and/or mentioned entrance fees. Please only import events featuring free food")
+			return redirect("/import/")
+			
+		return redirect("/")

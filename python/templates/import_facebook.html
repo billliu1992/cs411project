@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}UIUC FreeFood - Event Edit{% endblock %}
+{% block content %}
+
+<div class="container">
+
+<div class="row">
+
+	<div class="col-md-6">
+		<h2>Import Event from Facebook</h2>
+		
+		<form class="form-horizontal" role="form" action="/import/" method=post>
+			<div class="form-group">
+			
+				<label for="event_name" class="col-sm-3 control-label">Event URL</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" name="event-url" placeholder="https://www.facebook.com/events/...">
+				</div>
+			
+			</div>
+		</form>
+		
+	</div>
+	
+
+<div class="col-md-3"></div>
+{% endblock %}
