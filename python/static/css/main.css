@@ -26,3 +26,14 @@ body {
 	display: block;
 	margin: 10px 0;
 }
+
+/* Highlights user preferences in the main index file */
+.blue {
+ 	background-color: #3276B1;
+ 	color: #FFF;
+}
+
+.blue:hover {
+	background-color: #FFF;
+	color: #000;
+}

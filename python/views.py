@@ -24,7 +24,7 @@ def index():
 	cursor.execute("SELECT * FROM Event")
 
 	results = cursor.fetchall()
-
+	
 	events = []
 
 	for result in results:
@@ -36,11 +36,26 @@ def index():
 		event_body['location'] = event.location
 		event_body['food'] = event.food
 		event_body['eventId'] = event.eventId
-
+		
+		if not(current_user.is_authenticated()):
+			event_body['prefers'] = False
+		else:
+			event_body['prefers'] = prefers(event)
+			
 		events.append(event_body)
 		
 	return render_template("index.html", events=events)
-		
+
+def prefers(event):
+	user = UserUtil.get_user(current_user.userId)
+	for food in user.food_pref:
+		if food.foodId == event.food.foodId:
+			return True
+	for location in user.location_pref:
+		if location.locationId == event.location.locationId:
+			return True
+	return False
+	
 @app.route('/user_page')
 def user_page():
 	return render_template("user_page_modify.html", user='sally')
