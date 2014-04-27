@@ -36,3 +36,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+#Facebook API Secret keys
+fb_keys.py
