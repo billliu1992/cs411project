@@ -166,7 +166,7 @@ def event_new():
 	
 @app.route('/delete_<id>')
 def event_delete(id=None):
-	event = EventUtil.delete_event(id)
+	EventUtil.delete_event(id)
 	return redirect('/index')
 
 @app.route('/preferences',methods=['GET','POST'])
@@ -175,6 +175,7 @@ def preferences():
 	if request.method == 'GET':
 		all_locations = LocationUtil.get_all_locations_array()
 		foods = FoodUtil.get_all_foods_array()
+
 		user = UserUtil.get_user(current_user.userId)
 		
 		selected_locations = []
