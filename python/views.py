@@ -55,10 +55,10 @@ def index():
 def prefers(event):
 	user = UserUtil.get_user(current_user.userId)
 	for food in user.food_pref:
-		if food.foodId == event.food.foodId:
+		if event.food != None and food.foodId == event.food.foodId:
 			return True
 	for location in user.location_pref:
-		if location.locationId == event.location.locationId:
+		if event.location != None and location.locationId == event.location.locationId:
 			return True
 	return False
 	
