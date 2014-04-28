@@ -23,3 +23,14 @@ def convert_str_to_datetime(date_str):
 	if(date_str == None):
 		return None
 	return datetime.datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+	
+def convert_str_to_date(date_str):
+	if(date_str == None):
+		return None
+	return datetime.datetime.strptime(date_str, '%Y-%m-%d')
+	
+def convert_str_to_datetime_fb(date_str):
+	if(date_str == None):
+		return None
+		
+	return datetime.datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S')

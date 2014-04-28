@@ -18,8 +18,9 @@
         </thead>
         <tbody>
 			{% for event in events %}
+
 			{% if event.prefers == False %}
-            	<tr onclick="document.location = '/edit/{{event.eventId}}';">
+            	<tr onclick="document.location = '/view/{{event.eventId}}';">
             {% else %}
             	<tr class="blue" onclick="document.location = '/edit/{{event.eventId}}';">
             {% endif %}
