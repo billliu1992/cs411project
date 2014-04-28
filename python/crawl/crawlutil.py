@@ -4,6 +4,7 @@ from python.db.foodutil import FoodUtil
 from python.db.eventutil import EventUtil
 from python.obj.food import Food
 from python.db.locationutil import LocationUtil
+from python.db.common import *
 
 class CrawlUtil:
 	
@@ -71,19 +72,23 @@ class CrawlUtil:
 		for event in all_events:
 			score = 0
 			eventId, locationId, foodId, organizerId, name, startTime = event
-				
+			
+			print("FOR : " + name)
+			
 			if(new_locationId == None or locationId == None):
 				score += 0
 			elif(new_locationId != locationId):
 				score -= 1
 			else:
+				print("LOCATION IS THE SAME")
 				score += 1
-				
+			
 			if(new_startTime == None or startTime == None):
 				score += 0
-			elif(new_startTime != startTime):
+			elif(new_startTime - startTime > datetime.timedelta(minutes = 30)):
 				score -= 1
 			else:
+				print("START TIME IS THE SAME")
 				score *= 3
 				score += 1
 				
@@ -92,9 +97,11 @@ class CrawlUtil:
 			elif(new_foodId != foodId):
 				score -= 0
 			else:
+				print("FOOD IS THE SAME")
 				score += 1
 				
 			if(score > 1):
+				print str(score) + " " + name
 				return False
 				
 		return True

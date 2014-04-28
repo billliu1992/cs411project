@@ -287,7 +287,7 @@ def import_facebook():
 		if(event_dict["is_date_only"]):
 			start_time = convert_str_to_date(event_dict["start_time"])
 		else:
-			start_time = convert_str_to_datetime_fb(event_dict["start_time"][:len(start_time)-5])
+			start_time = convert_str_to_datetime_fb(event_dict["start_time"][:len(event_dict["start_time"])-5])
 		location = CrawlUtil.get_location_or_create(event_dict["location"], event_dict["venue"]["street"] + " " + event_dict["venue"]["city"] + ", " + event_dict["venue"]["state"])
 		
 		#make sure it isn't a duplicate
