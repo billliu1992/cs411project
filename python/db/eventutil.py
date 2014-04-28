@@ -111,6 +111,16 @@ class EventUtil:
 		connection.close()
 		
 	@staticmethod
+	def get_all_events_array():
+		connection = connect_to_db()
+		cursor = connection.cursor()
+		
+		cursor.execute("SELECT * FROM Event")
+		
+		result = cursor.fetchall()
+		return result
+		
+	@staticmethod
 	def get_events_by_food(food_obj):
 		foodId = food_obj.foodId
 		connection = connect_to_db()

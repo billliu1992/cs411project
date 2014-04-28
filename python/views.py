@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, session, flash, url_for
 from flask.ext.login import login_user, current_user, login_required, logout_user
 from python import app, lm
+from facepy.exceptions import FacebookError
 
 from python.db.common import *
 from python.db.eventutil import EventUtil
@@ -46,6 +47,8 @@ def index():
 			event_body['prefers'] = prefers(event)
 			
 		events.append(event_body)
+		
+	events.reverse()
 		
 	return render_template("index.html", events=events)
 
@@ -102,7 +105,17 @@ def sign_up():
 		return redirect(url_for('sign_in'))
 
 	return render_template("sign_up.html", form=form)
-	
+
+@app.route('/view/<id>',methods=['GET','POST'])
+def event_view(id):
+	if request.method == 'GET':
+		event = EventUtil.get_event(id)
+		if(event == None):
+			flash("That event does not exist!", "danger")
+			return redirect("/")
+			
+		return render_template("event_view.html", event=event)
+
 @app.route('/edit/<id>',methods=['GET','POST'])
 def event_edit(id=None):
 	if request.method == 'GET':
@@ -126,6 +139,14 @@ def event_edit(id=None):
 		event.food.foodName = request.form['event_food_name']
 		
 		event.name = request.form['event_name']
+		
+		if(request.form['event_time'] != ""):
+			try:
+				event_date = convert_str_to_datetime(request.form['event_time'])
+				event.time = event_date
+			except ValueError:
+				flash("You entered a datetime of the wrong format. The required format is: %Y-%m-%d %H:%M:%S")
+				return redirect('/edit/' + id)
 		
 		EventUtil.update_event(event)
 
@@ -240,26 +261,49 @@ def import_facebook():
 		
 		eventId = FacebookUtil.url_get_event_id(facebook_url)
 		
+		#validate event url
 		if(eventId == None):
-			flash("You must enter a valid Facebook event URL of the format https://www.facebook.com/events/...")
+			flash("You must enter a valid Facebook event URL of the format https://www.facebook.com/events/...", "danger")
 			return redirect("/import/")
 			
+		#validate event id
 		try:
-			event_dict = get_event_dict(eventId)
+			event_dict = FacebookUtil.get_event_dict(eventId)
 		except FacebookError as e:
 			flash("e.strerror")
 			return redirect("/import/")
 		
-		
-		
 		is_free = CrawlUtil.is_free_food(event_dict["description"])
-		start_time = event_dict["start_time"]
-		is_date_only = event_dict["is_date_only"]
-		location = event_dict["location"]
-		venue = event_dict["venue"]
 		
+		#make sure it is a free food event
 		if(not is_free):
-			flash("The description did not mention free food and/or mentioned entrance fees. Please only import events featuring free food")
+			flash("The description did not mention free food and/or mentioned entrance fees. Please only import events featuring free food", "danger")
 			return redirect("/import/")
 			
+		food = CrawlUtil.guess_food_type(event_dict["description"])
+		foodId = None
+		if(food != None):
+			foodId = food.foodId
+		if(event_dict["is_date_only"]):
+			start_time = convert_str_to_date(event_dict["start_time"])
+		else:
+			start_time = convert_str_to_datetime_fb(event_dict["start_time"][:len(event_dict["start_time"])-5])
+		location = CrawlUtil.get_location_or_create(event_dict["location"], event_dict["venue"]["street"] + " " + event_dict["venue"]["city"] + ", " + event_dict["venue"]["state"])
+		
+		#make sure it isn't a duplicate
+		if(not CrawlUtil.has_no_duplicate(start_time, location.locationId, foodId)):
+			flash("This event already exists!", "danger")
+			return redirect("/import/")
+		
+		new_event = EventUtil.create_event()
+		new_event.food = food
+		new_event.name = event_dict["name"]
+		new_event.time = start_time 
+		new_event.location = location
+		new_event.organizer = current_user
+		
+		EventUtil.update_event(new_event)
+		
+		
+		flash("Successfully imported Facebook event", "success")
 		return redirect("/")

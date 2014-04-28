@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}UIUC FreeFood - Event Edit{% endblock %}
+{% block content %}
+
+<div class="container">
+
+<div class="row">
+	<div class="col-md-3">
+		<h1>location stuff</h1>
+	</div>
+
+	<div class="col-md-6">
+		
+		<h2>Event <small>Details</small></h2>
+
+		<div>
+			<span class="col-sm-2 control-label">Name</span>
+			{{event.name}}
+		</div>
+		<div>
+			<span class="col-sm-2 control-label">Time</span>
+			{{event.time}}
+		</div>
+	
+		{% if event.location %}
+			<h2>Event <small>Location</small></h2>
+			<div>
+				<span class="col-sm-3 control-label">Location Name</span>
+				{{event.location.name}}
+			</div>
+			<div>
+				<span class="col-sm-3 control-label">Address</span>
+				{{event.location.address}}
+			</div>
+		{% endif %}
+
+		{% if event.food %}
+			<h2>Event <small>Food</small></h2>
+			<div>
+				<span class="col-sm-2 control-label">Food</span>
+				{{event.food.foodName}}
+			</div>
+		{% endif %}
+		<br /><br />
+		<a href="/edit/{{event.eventId}}">Edit</a>
+		
+	</div>
+	
+
+<div class="col-md-3"></div>
+{% endblock %}
