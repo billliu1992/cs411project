@@ -1,3 +1,4 @@
+#!venv/bin/python
 import re
 import requests
 import requests_cache
@@ -6,7 +7,7 @@ from bs4 import BeautifulSoup
 import Queue
 import threading
 
-from crawlutil import CrawlUtil
+from python.crawl.crawlutil import CrawlUtil
 from python.db.common import convert_str_to_datetime
 from python.db.eventutil import EventUtil
 
@@ -81,10 +82,10 @@ class DatamineThread2(threading.Thread):
 					details = soup.find(id="event-wrapper")
 
 					event_name = details.h2.string
-					food = Crawutil.guess_food_type(description)
+					food = CrawlUtil.guess_food_type(description)
 					location = None
 					date = None
-					time = None
+					time_str = None
 
 					for child in details.children:
 						try:
@@ -96,20 +97,32 @@ class DatamineThread2(threading.Thread):
 							if key == "Date":
 								date = CrawlUtil.parse_date(value)
 							if key == "Time":
-								time = CrawlUtil.parse_time(value)
+								time_str = CrawlUtil.parse_time(value)
 
 						except AttributeError:
 							continue
 
-					if CrawlUtil.has_no_duplicate(time, 
-							location.LocationId, food.foodId):
+					time_obj = convert_str_to_datetime(date + ' ' + time_str)
+
+					foodId = None
+					if food != None:
+						foodId = food.foodId
+
+					locationId = None
+					if location != None:
+						locationId = location.locationId
+
+					if CrawlUtil.has_no_duplicate(time_obj, locationId, foodId):
 						event = EventUtil.create_event()
 
-						event.time = convert_str_to_datetime(date + ' ' + time)
+						event.time = time_obj
 						event.location = location
 						event.food = food
+						event.name = event_name
 
 						EventUtil.update_event(event)
+
+						print "created ", event_name
 
 			# signals to queue job is done
 			self.out_queue.task_done()

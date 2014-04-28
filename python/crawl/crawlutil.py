@@ -8,7 +8,7 @@ from python.db.common import *
 
 class CrawlUtil:
 	
-	good_words = ["free", "drinks", "complimentary", "provided"]
+	good_words = ["lunch", "dinner", "free", "drinks", "complimentary", "provided"]
 	bad_words = ["$", "cost", "costs", "fee"]
 	
 	@staticmethod
@@ -34,8 +34,6 @@ class CrawlUtil:
 			if(word in description_str):
 				score -= description_str.count(word)
 		
-		print score
-				
 		if(score > 1):
 			return True
 		else:
@@ -155,21 +153,28 @@ class CrawlUtil:
 
 		month, day, year = date_str.split()
 
-		return year + '-' + assoc[month] + '-' + day.strip(',')
+		return year + '-' + str(assoc[month]) + '-' + day.strip(',')
 
 	@staticmethod
 	def parse_time(time_str):
-		if time_str == "All Day":
+		if time_str == "All Day" or time_str == "None":
 			return "00:00"
 
-		i = time_str.find(' -')
-		if i > 0:
-			time_str = time_str[0:i]
+		if time_str.find(' -') > 0:
+			time_str = time_str[0:time_str.find(' -')]
+		elif time_str.find('am') > 0:
+			time_str = time_str[0:time_str.find('am') + 2]
+		elif time_str.find('pm') > 0:
+			time_str = time_str[0:time_str.find('pm') + 2]
 
 		dig, let = time_str.split()
 		hour, minute = dig.split(':')
 
-		if let == 'pm' and hour != 12:
-			hour += 12
+		if let == 'pm' and hour != '12':
+			try:
+				hour = str(int(hour) + 12)
+			except ValueError:
+				hour = '12'
 
-		return hour + ':' + minute
+		retval = hour + ':' + minute + ':' + '00'
+		return retval
