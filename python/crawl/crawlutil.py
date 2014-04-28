@@ -18,7 +18,7 @@ class CrawlUtil:
 		
 		score = 0	#we keep track of how many good words were found compared to how many bad words were found
 		
-		for word in DescriptionParser.good_words:
+		for word in CrawlUtil.good_words:
 			if(word in description_str):
 				score += 1
 				
@@ -28,7 +28,7 @@ class CrawlUtil:
 			if("free " + food_type[1] in description_str):
 				score += 2
 				
-		for word in DescriptionParser.bad_words:
+		for word in CrawlUtil.bad_words:
 			if(word in description_str):
 				score -= 1
 		
@@ -103,5 +103,34 @@ class CrawlUtil:
 		#Maybe do more?
 		
 		return False
-		
-		
+
+	@staticmethod
+	def parse_date(date_str):
+		assoc = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5,
+				'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10,
+				'Nov': 11, 'Dec':12 }
+
+		i = date_str.find(' -')
+		if i > 0:
+			date_str = date_str[0:i]
+
+		month, day, year = date_str.split()
+
+		return year + '-' + assoc[month] + '-' + day.strip(',')
+
+	@staticmethod
+	def parse_time(time_str):
+		if time_str == "All Day":
+			return "00:00"
+
+		i = time_str.find(' -')
+		if i > 0:
+			time_str = time_str[0:i]
+
+		dig, let = time_str.split()
+		hour, minute = dig.split(':')
+
+		if let == 'pm' and hour != 12:
+			hour += 12
+
+		return hour + ':' + minute

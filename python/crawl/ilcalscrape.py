@@ -1,4 +1,3 @@
-#!venv/bin/python
 import re
 import requests
 import requests_cache
@@ -7,9 +6,11 @@ from bs4 import BeautifulSoup
 import Queue
 import threading
 
-requests_cache.install_cache()
+from crawlutil import CrawlUtil
+from python.db.common import convert_str_to_datetime
+from python.db.eventutil import EventUtil
 
-word_list = ['Pizza', 'food', 'drinks', 'Lunch']
+requests_cache.install_cache()
 calendar_links = open("calendar_list.txt")
 
 cal_links_queue = Queue.Queue()
@@ -76,17 +77,39 @@ class DatamineThread2(threading.Thread):
 			if description:
 				description = description.get_text()
 
-				for word in word_list:
-					if word in description:
-						print "found a match in ", description
-						details = soup.find(id="event-wrapper")
+				if CrawlUtil.is_free_food(description):
+					details = soup.find(id="event-wrapper")
 
-						for child in details.children:
-							try:
-								print child.span.string.strip()
-								print child.span.next_sibling.string
-							except AttributeError:
-								continue
+					event_name = details.h2.string
+					food = Crawutil.guess_food_type(description)
+					location = None
+					date = None
+					time = None
+
+					for child in details.children:
+						try:
+							key = child.span.string.strip()
+							value = child.span.next_sibling.string
+
+							if key == "Location":
+								location = CrawlUtil.get_location_or_create(value)
+							if key == "Date":
+								date = CrawlUtil.parse_date(value)
+							if key == "Time":
+								time = CrawlUtil.parse_time(value)
+
+						except AttributeError:
+							continue
+
+					if CrawlUtil.has_no_duplicate(time, 
+							location.LocationId, food.foodId):
+						event = EventUtil.create_event()
+
+						event.time = convert_str_to_datetime(date + ' ' + time)
+						event.location = location
+						event.food = food
+
+						EventUtil.update_event(event)
 
 			# signals to queue job is done
 			self.out_queue.task_done()
