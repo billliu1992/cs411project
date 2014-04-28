@@ -261,10 +261,12 @@ def import_facebook():
 		
 		eventId = FacebookUtil.url_get_event_id(facebook_url)
 		
+		#validate event url
 		if(eventId == None):
 			flash("You must enter a valid Facebook event URL of the format https://www.facebook.com/events/...", "danger")
 			return redirect("/import/")
 			
+		#validate event id
 		try:
 			event_dict = FacebookUtil.get_event_dict(eventId)
 		except FacebookError as e:
@@ -273,18 +275,23 @@ def import_facebook():
 		
 		is_free = CrawlUtil.is_free_food(event_dict["description"])
 		
+		#make sure it is a free food event
 		if(not is_free):
 			flash("The description did not mention free food and/or mentioned entrance fees. Please only import events featuring free food", "danger")
 			return redirect("/import/")
 			
 		food = CrawlUtil.guess_food_type(event_dict["description"])
+		foodId = None
+		if(food != None):
+			foodId = food.foodId
 		if(event_dict["is_date_only"]):
 			start_time = convert_str_to_date(event_dict["start_time"])
 		else:
 			start_time = convert_str_to_datetime_fb(event_dict["start_time"][:len(start_time)-5])
 		location = CrawlUtil.get_location_or_create(event_dict["location"], event_dict["venue"]["street"] + " " + event_dict["venue"]["city"] + ", " + event_dict["venue"]["state"])
 		
-		if(not CrawlUtil.has_no_duplicate(start_time, location, food)):
+		#make sure it isn't a duplicate
+		if(not CrawlUtil.has_no_duplicate(start_time, location.locationId, foodId)):
 			flash("This event already exists!", "danger")
 			return redirect("/import/")
 		
