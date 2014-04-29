@@ -194,8 +194,6 @@ def event_new():
 			
 		if(foodid.isdigit()):
 			event.food = FoodUtil.get_food(int(foodid))
-			
-		event.food.foodName = request.form['event_food_name']
 		
 		event.name = request.form['event_name']
 		
