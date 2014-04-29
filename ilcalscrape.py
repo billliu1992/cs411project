@@ -14,6 +14,16 @@ from python.db.eventutil import EventUtil
 requests_cache.install_cache()
 calendar_links = open("calendar_list.txt")
 
+time_pattern = r'(?P<hour>\d+):(?P<minute>\d+)\s(?P<letter>\w+)'
+date_pattern = r'(?P<month>\w+) (?P<day>\d+), (?P<year>\d+)'
+
+t_r = re.compile(time_pattern)
+d_r = re.compile(date_pattern)
+
+month_asc = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5,
+		'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10,
+		'Nov': 11, 'Dec':12 }
+
 cal_links_queue = Queue.Queue()
 cal_chunks_queue = Queue.Queue()
 event_links_queue = Queue.Queue()
@@ -81,11 +91,14 @@ class DatamineThread2(threading.Thread):
 				if CrawlUtil.is_free_food(description):
 					details = soup.find(id="event-wrapper")
 
-					event_name = details.h2.string
-					food = CrawlUtil.guess_food_type(description)
-					location = None
-					date = None
-					time_str = None
+					name = details.h2.string
+					if name == None:
+						continue
+
+					food_obj = CrawlUtil.guess_food_type(description)
+					location_obj = "Default location"
+					date_str = "Default date"
+					time_str = "Default time"
 
 					for child in details.children:
 						try:
@@ -93,36 +106,32 @@ class DatamineThread2(threading.Thread):
 							value = child.span.next_sibling.string
 
 							if key == "Location":
-								location = CrawlUtil.get_location_or_create(value)
-							if key == "Date":
-								date = CrawlUtil.parse_date(value)
-							if key == "Time":
-								time_str = CrawlUtil.parse_time(value)
+								location_obj = CrawlUtil.get_location_or_create(value)
+							elif key == "Date":
+								date_str = CrawlUtil.parse_date(value, d_r, month_asc)
+							elif key == "Time":
+								time_str = CrawlUtil.parse_time(value, t_r)
 
 						except AttributeError:
 							continue
 
-					time_obj = convert_str_to_datetime(date + ' ' + time_str)
+					if None not in (food_obj, location_obj, date_str, time_str):
+						time_obj = convert_str_to_datetime(date_str + ' ' + time_str)
 
-					foodId = None
-					if food != None:
-						foodId = food.foodId
+						if CrawlUtil.has_no_duplicate(time_obj,
+								location_obj.locationId, food_obj.foodId):
+							event = EventUtil.create_event()
 
-					locationId = None
-					if location != None:
-						locationId = location.locationId
+							event.time = time_obj
+							event.location = location_obj
+							event.food = food_obj
+							event.name = name
 
-					if CrawlUtil.has_no_duplicate(time_obj, locationId, foodId):
-						event = EventUtil.create_event()
+							EventUtil.update_event(event)
 
-						event.time = time_obj
-						event.location = location
-						event.food = food
-						event.name = event_name
-
-						EventUtil.update_event(event)
-
-						print "created ", event_name
+							print "created ", name
+						else:
+							print "found duplicate event ", name
 
 			# signals to queue job is done
 			self.out_queue.task_done()

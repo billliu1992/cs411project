@@ -142,39 +142,26 @@ class CrawlUtil:
 		return False
 
 	@staticmethod
-	def parse_date(date_str):
-		assoc = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5,
-				'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10,
-				'Nov': 11, 'Dec':12 }
+	def parse_date(date_str, regex, month_asc):
+		m = regex.match(date_str)
 
-		i = date_str.find(' -')
-		if i > 0:
-			date_str = date_str[0:i]
+		if m:
+			d = m.groupdict()
 
-		month, day, year = date_str.split()
+			return d['year'] + '-' + str(month_asc[d['month']]) + '-' + d['day']
 
-		return year + '-' + str(assoc[month]) + '-' + day.strip(',')
+		return None
 
 	@staticmethod
-	def parse_time(time_str):
-		if time_str == "All Day" or time_str == "None":
-			return "00:00"
+	def parse_time(time_str, regex):
+		m = regex.match(time_str)
 
-		if time_str.find(' -') > 0:
-			time_str = time_str[0:time_str.find(' -')]
-		elif time_str.find('am') > 0:
-			time_str = time_str[0:time_str.find('am') + 2]
-		elif time_str.find('pm') > 0:
-			time_str = time_str[0:time_str.find('pm') + 2]
+		if m:
+			d = m.groupdict()
 
-		dig, let = time_str.split()
-		hour, minute = dig.split(':')
+			if d['letter'] == 'pm' and d['hour'] != '12':
+				d['hour'] = str(int(d['hour']) + 12)
 
-		if let == 'pm' and hour != '12':
-			try:
-				hour = str(int(hour) + 12)
-			except ValueError:
-				hour = '12'
+			return d['hour'] + ':' + d['minute'] + ':' + '00'
 
-		retval = hour + ':' + minute + ':' + '00'
-		return retval
+		return None
