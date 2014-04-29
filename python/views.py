@@ -195,9 +195,15 @@ def event_new():
 		if(foodid.isdigit()):
 			event.food = FoodUtil.get_food(int(foodid))
 			
-		event.food.foodName = request.form['event_food_name']
-		
 		event.name = request.form['event_name']
+
+		if(request.form['event_time'] != ""):
+			try:
+				event_date = convert_str_to_datetime(request.form['event_time'])
+				event.time = event_date
+			except ValueError:
+				flash("You entered a datetime of the wrong format. The required format is: %Y-%m-%d %H:%M:%S")
+				return redirect('/edit/' + id)
 		
 		EventUtil.update_event(event)
 
